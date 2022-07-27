@@ -77,7 +77,6 @@ if(mainData.size()>0){
                 }
                 mainData.add(new Data(mid, data));
             }
-//            Collections.sort(mainData);
         } catch (JSONException e) {
             progressDialog.dismiss();
             e.printStackTrace();

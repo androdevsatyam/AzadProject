@@ -43,7 +43,7 @@ public class MainActivity extends AppCompatActivity {
             if (verifyDetails()) {
                 dialog.setMessage("Logging in...");
                 dialog.show();
-                Call<ResponseBody> requestLogin = Connection.getCon().login(new LoginModel(mainAct.email.getText().toString()
+                Call<ResponseBody> requestLogin = Connection.getCon().login("login.php",new LoginModel(mainAct.email.getText().toString()
                         , mainAct.pass.getText().toString()));
                 requestLogin.enqueue(new Callback<ResponseBody>() {
                     @Override
