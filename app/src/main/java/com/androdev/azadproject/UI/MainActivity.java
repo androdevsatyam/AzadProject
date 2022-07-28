@@ -43,21 +43,27 @@ public class MainActivity extends AppCompatActivity {
             if (verifyDetails()) {
                 dialog.setMessage("Logging in...");
                 dialog.show();
-                Call<ResponseBody> requestLogin = Connection.getCon().login("login.php",new LoginModel(mainAct.email.getText().toString()
-                        , mainAct.pass.getText().toString()));
-                requestLogin.enqueue(new Callback<ResponseBody>() {
-                    @Override
-                    public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                        /**
-                         * Api not Running so that's why implementing Long Click */
-                        startActivity(new Intent(MainActivity.this, DashBoard.class));
-                    }
 
-                    @Override
-                    public void onFailure(Call<ResponseBody> call, Throwable t) {
-                        Toast.makeText(MainActivity.this, "Something goes wrong.!", Toast.LENGTH_SHORT).show();
-                    }
-                });
+                try {
+                    Call<ResponseBody> requestLogin = Connection.getCon().login("login.php", new LoginModel(mainAct.email.getText().toString()
+                            , mainAct.pass.getText().toString()));
+                    requestLogin.enqueue(new Callback<ResponseBody>() {
+                        @Override
+                        public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                            /**
+                             * Api not Running so that's why implementing Long Click */
+                            startActivity(new Intent(MainActivity.this, DashBoard.class));
+                        }
+
+                        @Override
+                        public void onFailure(Call<ResponseBody> call, Throwable t) {
+                            Toast.makeText(MainActivity.this, "Something goes wrong.!", Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                }
+                catch (Exception e){
+                    Toast.makeText(MainActivity.this,"Server Error try with Long Press",Toast.LENGTH_SHORT).show();
+                }
             }
         });
 
