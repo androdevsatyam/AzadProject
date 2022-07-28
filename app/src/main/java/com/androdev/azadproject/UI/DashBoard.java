@@ -6,12 +6,11 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 
 import android.app.ProgressDialog;
 import android.os.Bundle;
-import android.util.Log;
+import android.widget.Toast;
 
 import com.androdev.azadproject.Adapter.DataAdapter;
 import com.androdev.azadproject.Helpers;
 import com.androdev.azadproject.Model.Data;
-import com.androdev.azadproject.Model.TData;
 import com.androdev.azadproject.R;
 import com.androdev.azadproject.databinding.ActivityDashBoardBinding;
 
@@ -21,33 +20,37 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 
 public class DashBoard extends AppCompatActivity {
 
     ActivityDashBoardBinding dashBoardBinding;
     ProgressDialog progressDialog;
-    ArrayList<Data> mainData = new ArrayList<>();
+    ArrayList<String> mids = new ArrayList<>();
+    public ArrayList<Data> mainData = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_dash_board);
-        dashBoardBinding= DataBindingUtil.setContentView(this,R.layout.activity_dash_board);
+        dashBoardBinding = DataBindingUtil.setContentView(this, R.layout.activity_dash_board);
 
-        progressDialog=new ProgressDialog(DashBoard.this);
+        progressDialog = new ProgressDialog(DashBoard.this);
 
         dashBoardBinding.data.setLayoutManager(new LinearLayoutManager(this));
         dashBoardBinding.data.setHasFixedSize(true);
+
         getData();
 
+        if (mainData.size() > 0) {
+            progressDialog.dismiss();
+            DataAdapter adapter = new DataAdapter(this, mainData);
+            dashBoardBinding.data.setAdapter(adapter);
+        } else {
+            progressDialog.dismiss();
+            Toast.makeText(DashBoard.this, "Data Not Found..", Toast.LENGTH_SHORT).show();
+        }
 
-
-if(mainData.size()>0){
-    DataAdapter adapter=new DataAdapter(this,mainData);
 }
-
-    }
 
     private void getData() {
         progressDialog.setMessage("Fetching Data");
@@ -55,27 +58,30 @@ if(mainData.size()>0){
         try {
             JSONObject obj = new JSONObject(Helpers.loadJSONFromAsset(DashBoard.this));
             JSONArray ourDataArray = obj.getJSONArray("sort");
-            ArrayList<TData> data = new ArrayList<>();
             String mid;
-
 
             for (int i = 0; i < ourDataArray.length(); i++) {
 
                 JSONObject mobject = ourDataArray.getJSONObject(i);
                 mid = mobject.getString("Mid");
+                ArrayList<Data.TData> tData = new ArrayList<>();
 
-                data.add(new TData(mobject.getString("Tid"), mobject.getString("amount"), mobject.getString("narration")));
-
-                for (int j = i; j < ourDataArray.length(); j++) {
-                    JSONObject tobject = ourDataArray.getJSONObject(i);
-                    if (mid.equalsIgnoreCase(tobject.getString("Mid"))) {
-                        TData tData = new TData(mobject.getString("Tid"), mobject.getString("amount"), mobject.getString("narration"));
-                        //by using if this restrict duplicate entry
-                        if (!data.contains(tData))
-                            data.add(tData);
+                if (!mids.contains(mid)) {
+                    for (int j = i; j < ourDataArray.length(); j++) {
+                        JSONObject tobject = ourDataArray.getJSONObject(j);
+                        if (mid.equalsIgnoreCase(tobject.getString("Mid"))) {
+                            Data.TData tiddata = new Data.TData(mobject.getString("Tid"), mobject.getString(
+                                    "amount"), mobject.getString("narration"));
+                            //by using if this restrict duplicate entry
+                            if (!tData.contains(tiddata))
+                                tData.add(tiddata);
+                        }
                     }
+                    Collections.sort(tData, (o1, o2) -> o1.getTid().compareTo(o2.getTid()));
+                    Data dataModel = new Data(mid, tData);
+                    mainData.add(dataModel);
+                    mids.add(mid);
                 }
-                mainData.add(new Data(mid, data));
             }
         } catch (JSONException e) {
             progressDialog.dismiss();

@@ -37,19 +37,20 @@ public class MainActivity extends AppCompatActivity {
         mainAct = DataBindingUtil.setContentView(this, R.layout.activity_main);
 
         dialog = new ProgressDialog(this);
-
+        dialog.setCancelable(false);
 
         mainAct.signin.setOnClickListener(v -> {
             if (verifyDetails()) {
                 dialog.setMessage("Logging in...");
                 dialog.show();
-
                 try {
                     Call<ResponseBody> requestLogin = Connection.getCon().login("login.php", new LoginModel(mainAct.email.getText().toString()
                             , mainAct.pass.getText().toString()));
                     requestLogin.enqueue(new Callback<ResponseBody>() {
                         @Override
                         public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                            dialog.dismiss();
+
                             /**
                              * Api not Running so that's why implementing Long Click */
                             startActivity(new Intent(MainActivity.this, DashBoard.class));
@@ -60,9 +61,9 @@ public class MainActivity extends AppCompatActivity {
                             Toast.makeText(MainActivity.this, "Something goes wrong.!", Toast.LENGTH_SHORT).show();
                         }
                     });
-                }
-                catch (Exception e){
-                    Toast.makeText(MainActivity.this,"Server Error try with Long Press",Toast.LENGTH_SHORT).show();
+                } catch (Exception e) {
+                    dialog.dismiss();
+                    runOnUiThread(() -> Toast.makeText(MainActivity.this, "Server Error try with Long Press", Toast.LENGTH_SHORT).show());
                 }
             }
         });
@@ -74,6 +75,7 @@ public class MainActivity extends AppCompatActivity {
                 new Timer().schedule(new TimerTask() {
                     @Override
                     public void run() {
+                        dialog.dismiss();
                         if (mainAct.email.getText() != null && mainAct.pass.getText() != null)
                             if (mainAct.email.getText().toString().equals("info@optium.com") && mainAct.pass.getText().toString().equals("Optium@112233"))
                                 startActivity(new Intent(MainActivity.this, DashBoard.class));
@@ -84,7 +86,6 @@ public class MainActivity extends AppCompatActivity {
                     }
                 }, 1200);
             }
-
             return true;
         });
     }

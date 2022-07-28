@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/dp10"
+        app:cardCornerRadius="@dimen/dp10">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="@dimen/dp5">
+
+            <TextView
+                android:id="@+id/tid"
+                style="@style/TextAppearance.MaterialComponents.Headline5"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/dp5"
+                android:textStyle="bold"
+                android:text="MIN1" />
+
+            <TextView
+                android:id="@+id/amount"
+                style="@style/TextAppearance.Material3.TitleMedium"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/tid"
+                android:layout_margin="@dimen/dp5"
+                android:text="MIN1" />
+
+            <TextView
+                android:id="@+id/narration"
+                style="@style/TextAppearance.Material3.TitleMedium"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/tid"
+                android:layout_alignParentRight="true"
+                android:layout_margin="@dimen/dp5"
+                android:text="MIN1" />
+
+
+        </RelativeLayout>
+    </androidx.cardview.widget.CardView>
+</layout>
